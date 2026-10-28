@@ -1,95 +1,75 @@
-Propunere dataset: Manuale școlare românești multimodale
+# Propunere dataset: Manuale școlare românești multimodale
 
-1. De ce acest dataset? La ce e bun și cine l-ar folosi?
+## 1. De ce acest dataset? La ce e bun și cine l-ar folosi?
 
-Scopul proiectului este construirea unui dataset multimodal din manuale școlare românești, prin extragerea și structurarea conținutului acestora: text, imagini, tabele și ecuații.
+Scopul proiectului este construirea unui dataset multimodal din manuale școlare românești, prin extragerea și structurarea textului, imaginilor, tabelelor și ecuațiilor.
 
-Problema pe care dorim să o rezolvăm este că simpla extragere a textului prin OCR clasic nu păstrează structura documentului și relațiile dintre elemente. De exemplu, o diagramă este adesea separată de paragraful care o explică, iar un tabel își pierde formatul logic. Datasetul nostru rezolvă acest neajuns prin organizarea conținutului ierarhic, la nivel de manual, pagină și element.
+Extragerea clasică prin OCR oferă textul unei pagini, dar nu păstrează întotdeauna structura documentului. De exemplu, o diagramă poate pierde legătura cu paragraful care o explică, iar un tabel poate fi transformat într-un șir de cuvinte fără organizarea pe rânduri și coloane. **Ne propunem** să păstrăm aceste relații printr-o structură ierarhică: manual → pagină → element.
 
-Principalele utilizări (cine l-ar folosi și la ce e bun):
+Datasetul ar putea fi utilizat de dezvoltatori de aplicații educaționale, cercetători în NLP și profesori, în special pentru **asistenți educaționali AI**, **sisteme RAG** care răspund cu referințe la paginile sursă și **generarea de rezumate, exerciții și fișe de recapitulare**. Un asistent ar putea recupera explicația unui concept împreună cu imaginea relevantă și ar putea reformula lecția la nivelul unui elev de clasa a V-a.
 
-Asistenți educaționali personalizați (AI Tutors): Acesta este principalul avantaj pentru elevi. Având acces la date structurate (text asociat corect cu imagini), un model de limbaj (LLM) poate prelua o lecție dificilă și o poate rescrie într-un limbaj prietenos, „mai uman” și pe înțelesul unui elev de clasa a V-a, adaptând complexitatea la nevoile copilului.
+Există dataseturi precum [Romanian FinePDFs](https://huggingface.co/datasets/OpenLLM-Ro/ro_sft_finepdfs), orientat către perechi imagine–text pentru OCR în română, și [EduMUSE](https://huggingface.co/datasets/upb-nlp/EduMUSE), cu exerciții multimodale din manuale în engleză. **Contribuția propusă** este o reprezentare specifică manualelor școlare românești, cu metadate educaționale, elemente de tipuri distincte și legături între conținutul textual și cel vizual. Astfel, aplicațiile ar putea reutiliza datele fără a reprocesa fiecare manual de la zero.
 
-Sisteme RAG educaționale: Capabile să răspundă la întrebări punctuale folosind informații sigure din manuale și să indice cu exactitate pagina sau imaginea sursă.
+## 2. Surse
 
-Generarea automată de materiale: Crearea de rezumate, exerciții, sau flashcard-uri bazate direct pe programa școlară.
+- **Sursa prototipului:** [Manuale.edu.ro – Limba și literatura română, clasa a V-a](https://manuale.edu.ro/manuale/Clasa%20a%20V-a/Limba%20si%20literatura%20romana/Qk9PSOxFVA/).
+- **Dimensiune:** exportul PDF local are aproximativ **246 de pagini**; au fost procesate **30 de pagini (12–41)** cu Tesseract OCR, folosind limba `ron`.
+- **Licență:** nu avem confirmate drepturi de redistribuire pentru textul și imaginile extrase din această sursă. Prin urmare, **PDF-ul și rezultatele OCR rămân locale** până la clarificarea drepturilor. Pentru un eșantion public vom folosi surse cu permisiuni de reutilizare adecvate.
 
-Ce aduce în plus? Există deja dataseturi precum Romanian FinePDFs (pentru OCR general) sau EduMUSE (pentru manuale în engleză). Datasetul nostru își propune să ofere o reprezentare structurată a manualelor școlare românești, combinând metadatele educaționale cu informațiile textuale și vizuale și relațiile dintre acestea.. Astfel, orice altă aplicație educațională pentru limba română va putea folosi aceste date fără să reproceseze manualele de la zero.
+## 3. Date sensibile
 
-2. Surse (De unde luați datele)
+Manualele publice nu conțin, de regulă, date personale private ale elevilor, dar pot apărea nume, fotografii sau exemple cu informații identificabile. Vom verifica datele și vom elimina ori anonimiza informațiile personale nenecesare. Numele autorilor și metadatele bibliografice publice vor fi păstrate pentru atribuirea surselor.
 
-Sursa utilizată în prototip:
+**Datele brute (PDF-uri, scanări) nu vor fi încărcate pe GitHub.** Nici textul OCR și imaginile extrase nu vor fi publicate fără drepturi de reutilizare clarificate.
 
-Manuale.edu.ro – manualul „Limba și literatura română”, clasa a V-a, varianta PDF.
+## 4. Schema datasetului
 
-Dimensiune: export PDF de aprox. 246 de pagini; prototipul procesează local un eșantion de 30 de pagini (pg. 12–41).
+Structura este **Manual → Pagină → Element**. Metadatele manualului (titlu, clasă, materie, autori, sursă, licență) sunt păstrate separat. Fiecare linie din `pages.jsonl` reprezintă o pagină și conține o listă ordonată `elements`.
 
-Licență: Până la clarificarea drepturilor de redistribuire a conținutului extras de pe platforma Ministerului, datele brute procesate rămân locale (utilizare în scop educațional/cercetare).
+| Tip element | Câmpuri specifice |
+|---|---|
+| `text` | `text` |
+| `image` | `image_path`, `caption`, `description`, `related_element_ids` |
+| `table` | `rows`, `raw_text`, `image_path` |
+| `equation` | `latex`, `raw_text`, `image_path` |
 
-3. Date sensibile
+**Exemplul 1 — pagina PDF 12 (fragment real OCR, prescurtat):**
 
-Manualele școlare nu conțin, în general, date personale (PII) ale elevilor. Pot apărea însă informații despre autori, fotografii cu persoane reale sau nume în cadrul exercițiilor (ex. „Maria are 5 mere”).
-
-Cum le gestionăm: Vom rula un pas de validare (manuală/automatizată) pentru a ne asigura că nu extragem date sensibile. Informațiile bibliografice și numele autorilor vor fi păstrate strict pentru atribuirea corectă a surselor.
-Notă: PDF-urile originale (datele brute) nu vor fi încărcate pe GitHub. Vom publica doar fișierele structurate (JSON/text/extrase), cu respectarea drepturilor de autor.
-
-4. Schema datasetului
-
-Datasetul va fi organizat ierarhic: Manual → Pagină → Element.
-Fiecare pagină va reprezenta o înregistrare de tip JSONL, conținând o listă ordonată de elemente (text, image, table, equation).
-
-Schema simplificată (format JSON):
-
-{
-  "page_id": "string",
-  "manual_id": "string",
-  "pdf_page_number": 12,
-  "ocr_engine": "tesseract",
-  "ocr_language": "ron",
-  "elements": [
-    {
-      "element_id": "string",
-      "type": "text | image | table | equation",
-      "content": "Conținutul extras (text, path imagine sau structură tabel)"
-    }
-  ]
-}
-
-
-Exemple din datele reale (extragere text prin Tesseract OCR):
-
-Exemplul 1 – Pagina PDF 12:
-
+```json
 {
   "page_id": "art_romana_5_2022_p12",
   "manual_id": "art_romana_5_2022",
   "pdf_page_number": 12,
+  "ocr_engine": "tesseract",
+  "ocr_language": "ron",
   "elements": [{
-    "element_id": "text_1",
+    "element_id": "art_romana_5_2022_p12_text_1",
     "type": "text",
-    "content": "COMPETENŢE GENERALE ȘI SPECIFICE"
+    "text": "COMPETENŢE GENERALE ȘI SPECIFICE"
   }]
 }
+```
 
+**Exemplul 2 — pagina PDF 14 (fragment real OCR, prescurtat):**
 
-Exemplul 2 – Pagina PDF 14:
-
+```json
 {
   "page_id": "art_romana_5_2022_p14",
   "manual_id": "art_romana_5_2022",
   "pdf_page_number": 14,
+  "ocr_engine": "tesseract",
+  "ocr_language": "ron",
   "elements": [{
-    "element_id": "text_1",
+    "element_id": "art_romana_5_2022_p14_text_1",
     "type": "text",
-    "content": "GHID DE UTILIZARE A MANUALULUI DIGITAL"
+    "text": "GHID DE UTILIZARE A MANUALULUI DIGITAL"
   }]
 }
+```
 
+**Stadiu actual:** extragere OCR și export JSONL pentru elemente `text`. Schema Pydantic suportă și `image`, `table`, `equation`, urmând ca extragerea și asocierea acestora să fie implementate ulterior.
 
-5. Cum vom demonstra utilitatea? (Opțional)
+## 5. Cum vom demonstra utilitatea? (opțional)
 
-Pentru a demonstra utilitatea datasetului, vom realiza un prototip de asistent educațional AI, folosind Python și Streamlit.
+Vom realiza un prototip de **asistent educațional AI** cu Python și Streamlit. Elevul va putea pune întrebări despre materia studiată, iar sistemul va recupera automat fragmentele relevante și, după extinderea multimodală, imaginile asociate. Asistentul va genera explicații adaptate nivelului școlar și va indica paginile sursă.
 
-Elevii vor putea adresa întrebări despre conceptele studiate, iar sistemul va recupera automat informațiile relevante din manuale, inclusiv imaginile asociate. Pe baza acestora, asistentul va genera explicații adaptate nivelului educațional al elevului și va indica paginile sursă.
-
-Astfel, vom demonstra cum organizarea structurată a conținutului poate facilita dezvoltarea unor instrumente educaționale interactive.
