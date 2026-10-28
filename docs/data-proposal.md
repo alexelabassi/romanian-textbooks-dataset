@@ -14,7 +14,7 @@ Sisteme RAG educaționale: Capabile să răspundă la întrebări punctuale folo
 
 Generarea automată de materiale: Crearea de rezumate, exerciții, sau flashcard-uri bazate direct pe programa școlară.
 
-Ce aduce în plus? Există deja dataseturi precum Romanian FinePDFs (pentru OCR general) sau EduMUSE (pentru manuale în engleză). Datasetul nostru aduce în premieră o reprezentare specifică manualelor din România, combinând metadatele educaționale cu relațiile text-vizual. Astfel, orice altă aplicație educațională pentru limba română va putea folosi aceste date fără să reproceseze manualele de la zero.
+Ce aduce în plus? Există deja dataseturi precum Romanian FinePDFs (pentru OCR general) sau EduMUSE (pentru manuale în engleză). Datasetul nostru își propune să ofere o reprezentare structurată a manualelor școlare românești, combinând metadatele educaționale cu informațiile textuale și vizuale și relațiile dintre acestea.. Astfel, orice altă aplicație educațională pentru limba română va putea folosi aceste date fără să reproceseze manualele de la zero.
 
 2. Surse (De unde luați datele)
 
@@ -25,10 +25,6 @@ Manuale.edu.ro – manualul „Limba și literatura română”, clasa a V-a, va
 Dimensiune: export PDF de aprox. 246 de pagini; prototipul procesează local un eșantion de 30 de pagini (pg. 12–41).
 
 Licență: Până la clarificarea drepturilor de redistribuire a conținutului extras de pe platforma Ministerului, datele brute procesate rămân locale (utilizare în scop educațional/cercetare).
-
-Sursă potențială pentru extindere:
-
-OER Moldova – Biologie, clasa a IX-a, manual publicat sub licență deschisă CC BY 4.0, ideal pentru a fi urcat integral pe GitHub. Ne propunem să prioritizăm surse cu drepturi de reutilizare clare (Open Educational Resources).
 
 3. Date sensibile
 
@@ -92,10 +88,8 @@ Exemplul 2 – Pagina PDF 14:
 
 5. Cum vom demonstra utilitatea? (Opțional)
 
-Pentru a demonstra utilitatea datasetului, vom realiza un mic demo (un script Python / interfață simplă în Streamlit) care simulează un Asistent Educațional AI.
+Pentru a demonstra utilitatea datasetului, vom realiza un prototip de asistent educațional AI, folosind Python și Streamlit.
 
-Acesta va prelua o secțiune brută din dataset (un concept teoretic explicat formal în manual + imaginea asociată) și, printr-un prompt, va reformula acea lecție pentru a fi „pe înțelesul unui elev de clasa a V-a” (limbaj mai uman, explicativ, simplificat). Astfel, demonstrăm că structurarea corectă a informației permite construirea unor instrumente care ușurează considerabil învățarea pentru copii.
+Elevii vor putea adresa întrebări despre conceptele studiate, iar sistemul va recupera automat informațiile relevante din manuale, inclusiv imaginile asociate. Pe baza acestora, asistentul va genera explicații adaptate nivelului educațional al elevului și va indica paginile sursă.
 
-Eșantion de date (Anexă)
-
-Prototipul actual conține 30 de înregistrări JSONL. Un eșantion relevant de aprox. 50 de rânduri va fi adăugat în repository în fișierul sample_data.jsonl, conform structurii prezentate mai sus.
+Astfel, vom demonstra cum organizarea structurată a conținutului poate facilita dezvoltarea unor instrumente educaționale interactive.
