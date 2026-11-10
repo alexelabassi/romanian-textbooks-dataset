@@ -1,11 +1,6 @@
 
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field
-import pytesseract
-
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)& "C:\Program Files\Tesseract-OCR\tesseract.exe" --list-langs
 
 class Manual(BaseModel):
     manual_id: str
@@ -27,6 +22,7 @@ class TextElement(BaseModel):
     element_id: str
     type: Literal["text"]
     text: str
+    label: str | None = None
 
 
 class ImageElement(BaseModel):
